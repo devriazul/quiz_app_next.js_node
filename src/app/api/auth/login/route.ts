@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('Login attempt for username:', email);
+    console.log('Login attempt for email:', email);
 
     const user = await prisma.user.findUnique({
       where: { email }
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     if (!user) {
       console.log('User not found');
       return NextResponse.json(
-        { message: 'Invalid credentials' },
+        { message: 'Invalid email or password' },
         { status: 401 }
       );
     }
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     if (!isValidPassword) {
       console.log('Invalid password');
       return NextResponse.json(
-        { message: 'Invalid credentials' },
+        { message: 'Invalid email or password' },
         { status: 401 }
       );
     }
@@ -51,14 +51,14 @@ export async function POST(request: Request) {
 
     console.log('Login successful for user:', email);
 
+    // Remove password from user object
+    const { password: _, ...userWithoutPassword } = user;
+
     const response = NextResponse.json(
       { 
         message: 'Login successful',
         token,
-        user: {
-          id: user.id,
-          email: user.email
-        }
+        user: userWithoutPassword
       },
       { status: 200 }
     );
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: 'Failed to login. Please try again.' },
       { status: 500 }
     );
   } finally {
