@@ -7,6 +7,10 @@ interface ErrorResponse {
   message: string;
 }
 
+interface AuthError extends Error {
+  message: string;
+}
+
 export default function Home() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
@@ -54,8 +58,9 @@ export default function Home() {
         setIsLogin(true);
         setFormData({ ...formData, password: '', confirmPassword: '' });
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const authError = error as AuthError;
+      setError(authError.message || 'An error occurred during authentication');
     } finally {
       setLoading(false);
     }
