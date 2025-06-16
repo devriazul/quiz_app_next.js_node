@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Question {
@@ -72,49 +72,7 @@ export default function Exam() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!quizData[quizId]) {
-      router.replace('/dashboard');
-      return;
-    }
-  }, [quizId, router]);
-
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      handleSubmit();
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  const handleAnswerChange = (answer: string) => {
-    setSelectedAnswer(answer);
-    setAnswers(prev => ({
-      ...prev,
-      [currentQuestion]: answer
-    }));
-  };
-
-  const handleNext = () => {
-    if (currentQuestion < quizData[quizId].questions.length - 1) {
-      setCurrentQuestion(prev => prev + 1);
-      setSelectedAnswer(answers[currentQuestion + 1] || '');
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(prev => prev - 1);
-      setSelectedAnswer(answers[currentQuestion - 1] || '');
-    }
-  };
-
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
@@ -156,6 +114,48 @@ export default function Exam() {
       console.error('Error submitting quiz:', error);
       alert('Failed to submit quiz. Please try again.');
       setIsSubmitting(false);
+    }
+  }, [isSubmitting, quizId, answers, router]);
+
+  useEffect(() => {
+    if (!quizData[quizId]) {
+      router.replace('/dashboard');
+      return;
+    }
+  }, [quizId, router]);
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      handleSubmit();
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft, handleSubmit]);
+
+  const handleAnswerChange = (answer: string) => {
+    setSelectedAnswer(answer);
+    setAnswers(prev => ({
+      ...prev,
+      [currentQuestion]: answer
+    }));
+  };
+
+  const handleNext = () => {
+    if (currentQuestion < quizData[quizId].questions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+      setSelectedAnswer(answers[currentQuestion + 1] || '');
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
+      setSelectedAnswer(answers[currentQuestion - 1] || '');
     }
   };
 

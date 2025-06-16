@@ -3,9 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface UserData {
+  email: string;
+  token: string;
+}
+
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +22,7 @@ export default function Dashboard() {
       return;
     }
 
-    setUser(JSON.parse(storedUser));
+    setUserData(JSON.parse(storedUser));
     setIsLoading(false);
   }, [router]);
 
@@ -54,7 +59,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!user) {
+  if (!userData) {
     return null;
   }
 
@@ -73,10 +78,10 @@ export default function Dashboard() {
               <div className="flex items-center space-x-2">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                   <span className="text-blue-600 font-medium">
-                    {user.email.charAt(0).toUpperCase()}
+                    {userData.email.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <span className="text-gray-600">{user.email}</span>
+                <span className="text-gray-600">{userData.email}</span>
               </div>
               <button
                 onClick={handleLogout}

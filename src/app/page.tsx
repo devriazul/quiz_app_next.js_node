@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface ErrorResponse {
+  message: string;
+}
+
 export default function Home() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
@@ -11,7 +15,7 @@ export default function Home() {
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +42,8 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Authentication failed');
+        const errorData = await response.json() as ErrorResponse;
+        throw new Error(errorData.message || 'Authentication failed');
       }
 
       if (isLogin) {
