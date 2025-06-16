@@ -35,13 +35,17 @@ export default function Home() {
       }
 
       // Store the token in localStorage
-      localStorage.setItem('token', data.token);
-      
-      // Redirect to dashboard
-      router.push('/dashboard');
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        // Redirect to dashboard
+        router.push('/dashboard');
+      } else {
+        throw new Error('No authentication token received');
+      }
     } catch (error) {
       const authError = error as AuthError;
-      setError(authError.message || 'An error occurred during login');
+      setError(authError.message || 'An error occurred during login. Please try again.');
+      console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }
