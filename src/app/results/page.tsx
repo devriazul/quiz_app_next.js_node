@@ -16,7 +16,6 @@ function ResultsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const quizId = searchParams.get('quiz');
-  const score = searchParams.get('score');
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(true);
 
