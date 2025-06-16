@@ -7,8 +7,9 @@ interface AuthError extends Error {
   message: string;
 }
 
-export default function Home() {
+export default function Register() {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -20,28 +21,25 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || 'Registration failed');
       }
 
-      // Store the token in localStorage
-      localStorage.setItem('token', data.token);
-      
-      // Redirect to dashboard
-      router.push('/dashboard');
+      // Redirect to login page after successful registration
+      router.push('/');
     } catch (error) {
       const authError = error as AuthError;
-      setError(authError.message || 'An error occurred during login');
+      setError(authError.message || 'An error occurred during registration');
     } finally {
       setIsLoading(false);
     }
@@ -51,8 +49,8 @@ export default function Home() {
     <main className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-sm border border-gray-100">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="mt-2 text-gray-700">Please sign in to your account</p>
+          <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
+          <p className="mt-2 text-gray-700">Sign up to get started</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -63,6 +61,22 @@ export default function Home() {
           )}
 
           <div className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-800">
+                Full Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900"
+                placeholder="Enter your full name"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-800">
                 Email
@@ -91,7 +105,7 @@ export default function Home() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900"
-                placeholder="Enter your password"
+                placeholder="Create a password"
               />
             </div>
           </div>
@@ -108,23 +122,23 @@ export default function Home() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span>Signing in...</span>
+                  <span>Creating account...</span>
                 </div>
               ) : (
-                'Sign in'
+                'Create Account'
               )}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm text-gray-700">
-              Don&apos;t have an account?{' '}
+              Already have an account?{' '}
               <button
                 type="button"
-                onClick={() => router.push('/register')}
+                onClick={() => router.push('/')}
                 className="font-medium text-blue-700 hover:text-blue-600"
               >
-                Register here
+                Sign in here
               </button>
             </p>
           </div>
@@ -132,4 +146,4 @@ export default function Home() {
       </div>
     </main>
   );
-}
+} 
