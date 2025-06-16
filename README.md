@@ -1,36 +1,170 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Quiz Application
+
+A modern, full-stack quiz application built with Next.js, TypeScript, and Prisma. This application allows users to take timed quizzes with both multiple-choice and short-answer questions.
+
+## Features
+
+- 🔐 **Authentication System**
+  - Email-based user registration and login
+  - JWT token-based authentication
+  - Secure password hashing with bcrypt
+
+- 📊 **Quiz Dashboard**
+  - Clean, modern interface
+  - Real-time score tracking
+  - Progress indicators
+  - User profile display
+
+- ⏱️ **Timed Exams**
+  - 10-minute countdown timer
+  - Auto-submission when time expires
+  - Progress tracking
+  - Multiple question types support
+
+- 📝 **Question Types**
+  - Multiple choice questions
+  - Short answer questions
+  - Immediate answer validation
+
+- 📈 **Results & Analytics**
+  - Score calculation
+  - Performance visualization
+  - Detailed result breakdown
+  - Option to retake quizzes
+
+## Tech Stack
+
+- **Frontend**
+  - Next.js 15.3.3
+  - TypeScript
+  - Tailwind CSS
+  - React Hooks
+
+- **Backend**
+  - Next.js API Routes
+  - Prisma ORM
+  - SQLite Database
+  - JWT Authentication
+
+- **Development Tools**
+  - Turbopack
+  - Prisma Studio
+  - TypeScript
+  - ESLint
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js (v18 or higher)
+- npm or yarn
+- Git
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd quiz-application
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env` file in the root directory with the following variables:
+   ```
+   DATABASE_URL="file:./prisma/dev.db"
+   JWT_SECRET="your-secret-key"
+   ```
+
+4. Initialize the database:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+The application will be available at `http://localhost:3000`
+
+## Project Structure
+
+```
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── auth/
+│   │   │   │   ├── login/
+│   │   │   │   └── register/
+│   │   │   └── results/
+│   │   ├── dashboard/
+│   │   ├── exam/
+│   │   └── results/
+│   └── components/
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+├── public/
+└── package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The application uses the following data models:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **User**
+  - id (Int, auto-increment)
+  - email (String, unique)
+  - password (String, hashed)
+  - createdAt (DateTime)
+  - updatedAt (DateTime)
 
-## Learn More
+- **Quiz**
+  - id (String, UUID)
+  - title (String)
+  - questions (JSON)
+  - createdAt (DateTime)
+  - updatedAt (DateTime)
 
-To learn more about Next.js, take a look at the following resources:
+- **QuizAttempt**
+  - id (String, UUID)
+  - userId (Int, foreign key)
+  - quizId (String, foreign key)
+  - answers (JSON)
+  - score (Int)
+  - createdAt (DateTime)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Endpoints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+- `POST /api/auth/verify` - Verify JWT token
 
-## Deploy on Vercel
+### Quiz
+- `GET /api/quiz` - Get quiz details
+- `POST /api/results` - Submit quiz results
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Next.js team for the amazing framework
+- Prisma team for the excellent ORM
+- Tailwind CSS for the utility-first CSS framework
+# quiz_app_next.js_node
