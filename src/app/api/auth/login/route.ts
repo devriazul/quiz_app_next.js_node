@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     console.log('Password verified, generating token');
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '1d' }
     );
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     console.log('Login successful for user:', email);
 
     // Remove password from user object
-    const { password: userPassword, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = user;
 
     const response = NextResponse.json(
       { 
