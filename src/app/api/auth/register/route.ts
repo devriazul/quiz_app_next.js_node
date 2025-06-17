@@ -8,6 +8,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, email, password } = body;
+    const userPassword = password;
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
 
     // Create user
     const user = await prisma.user.create({
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     });
 
     // Remove password from response
-    const { password: userPassword, ...userWithoutPassword } = user;
+    const { password: userPasswordFromDB, ...userWithoutPassword } = user;
 
     return NextResponse.json(
       { 

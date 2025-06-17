@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { message: 'Email and password are required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
@@ -26,18 +26,18 @@ export async function POST(request: Request) {
     if (!user) {
       console.log('User not found');
       return NextResponse.json(
-        { message: 'Invalid email or password' },
+        { error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
     console.log('User found, verifying password');
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.password);
 
-    if (!isValidPassword) {
+    if (!isValid) {
       console.log('Invalid password');
       return NextResponse.json(
-        { message: 'Invalid email or password' },
+        { error: 'Invalid credentials' },
         { status: 401 }
       );
     }

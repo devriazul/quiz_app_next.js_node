@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { verifyToken } from '../auth/verify';
 import { PrismaClient } from '@prisma/client';
+import { JwtPayload } from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
+
+interface DecodedToken extends JwtPayload {
+  userId: string;
+}
 
 export async function GET(request: Request) {
   try {
@@ -12,7 +17,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = await verifyToken(token);
+    const decoded = await verifyToken(token) as DecodedToken;
     if (!decoded) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -31,7 +36,7 @@ export async function GET(request: Request) {
     // Get the latest attempt for this quiz by the user
     const attempt = await prisma.quizAttempt.findFirst({
       where: {
-        userId: (decoded as any).userId,
+        userId: parseInt(decoded.userId),
         quizId: quizId
       },
       orderBy: {
@@ -72,7 +77,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = await verifyToken(token);
+    const decoded = await verifyToken(token) as DecodedToken;
     if (!decoded) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -91,7 +96,7 @@ export async function POST(request: Request) {
     // Save the quiz attempt
     const attempt = await prisma.quizAttempt.create({
       data: {
-        userId: (decoded as any).userId,
+        userId: parseInt(decoded.userId),
         quizId,
         score,
         answers
