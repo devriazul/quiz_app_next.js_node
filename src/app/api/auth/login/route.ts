@@ -51,17 +51,18 @@ export async function POST(request: Request) {
 
     console.log('Login successful for user:', email);
 
-    // Remove password from user object
-    const { password: _, ...userWithoutPassword } = user;
+    // Remove password from response
+    const userWithoutPassword = {
+      id: user.id,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
 
-    const response = NextResponse.json(
-      { 
-        message: 'Login successful',
-        token,
-        user: userWithoutPassword
-      },
-      { status: 200 }
-    );
+    const response = NextResponse.json({
+      user: userWithoutPassword,
+      token
+    });
 
     // Set the token in an HTTP-only cookie
     response.cookies.set('token', token, {
