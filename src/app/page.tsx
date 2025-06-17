@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface AuthError extends Error {
@@ -13,6 +13,14 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+      router.replace('/dashboard');
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,11 +42,12 @@ export default function Home() {
         throw new Error(data.message || 'Login failed');
       }
 
-      // Store the token in localStorage
+      // Store the token and user data in localStorage
       if (data.token) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         // Redirect to dashboard
-        router.push('/dashboard');
+        router.replace('/dashboard');
       } else {
         throw new Error('No authentication token received');
       }

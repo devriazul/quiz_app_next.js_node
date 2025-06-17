@@ -28,15 +28,21 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     try {
-      localStorage.clear();
+      // Clear localStorage first
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Clear all cookies
       document.cookie.split(';').forEach(cookie => {
-        document.cookie = cookie
-          .replace(/^ +/, '')
-          .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        const [name] = cookie.split('=');
+        document.cookie = `${name.trim()}=;expires=${new Date(0).toUTCString()};path=/`;
       });
-      router.replace('/');
+
+      // Force a complete page reload to the root path
+      window.location.href = '/';
     } catch (error) {
       console.error('Logout error:', error);
+      // Fallback to hard reload
       window.location.href = '/';
     }
   };

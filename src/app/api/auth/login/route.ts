@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     console.log('Login successful for user:', email);
 
     // Remove password from user object
-    const { password: _password, ...userWithoutPassword } = user;
+    const { password: userPassword, ...userWithoutPassword } = user;
 
     const response = NextResponse.json(
       { 

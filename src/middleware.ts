@@ -15,19 +15,20 @@ export function middleware(request: NextRequest) {
 
   // If trying to access protected route without token, redirect to login
   if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/', request.url);
-    return NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(new URL('/', request.url));
+    // Clear any existing cookies
+    response.cookies.delete('token');
+    return response;
   }
 
   // If has token and on auth page, redirect to dashboard
   if (token && isAuthPage) {
-    const dashboardUrl = new URL('/dashboard', request.url);
-    return NextResponse.redirect(dashboardUrl);
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/exam/:path*'],
+  matcher: ['/', '/dashboard/:path*', '/exam/:path*', '/results/:path*']
 }; 

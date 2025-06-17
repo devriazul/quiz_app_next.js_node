@@ -18,6 +18,7 @@ function ResultsContent() {
   const quizId = searchParams.get('quiz');
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -35,13 +36,15 @@ function ResultsContent() {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch results');
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to fetch results');
         }
 
         const data = await response.json();
         setResult(data);
       } catch (error) {
         console.error('Error fetching results:', error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch results');
       } finally {
         setLoading(false);
       }
@@ -61,6 +64,23 @@ function ResultsContent() {
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
           <span className="text-lg text-gray-600">Loading results...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-4">Error</h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Dashboard
+          </button>
         </div>
       </div>
     );
