@@ -167,4 +167,85 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Next.js team for the amazing framework
 - Prisma team for the excellent ORM
 - Tailwind CSS for the utility-first CSS framework
+
+## Microservices with Event-Driven Architecture (EDA) Use Case
+
+### Quiz Application as a Microservice Architecture
+
+This quiz application can be extended to demonstrate a practical use case of microservices with Event-Driven Architecture (EDA). Here's how the system could be structured:
+
+#### Microservices Breakdown:
+
+1. **Authentication Service**
+   - Handles user registration and login
+   - Manages JWT token generation and validation
+   - Publishes events: `UserRegistered`, `UserLoggedIn`
+
+2. **Quiz Service**
+   - Manages quiz content and questions
+   - Handles quiz session creation
+   - Publishes events: `QuizStarted`, `QuizCompleted`
+
+3. **Timer Service**
+   - Manages quiz time limits
+   - Tracks remaining time
+   - Publishes events: `TimeWarning`, `TimeExpired`
+
+4. **Results Service**
+   - Processes quiz submissions
+   - Calculates scores
+   - Publishes events: `ResultsCalculated`, `ResultsReady`
+
+5. **Notification Service**
+   - Sends notifications to users
+   - Handles email/SMS notifications
+   - Subscribes to events: `ResultsReady`, `TimeWarning`
+
+#### Event Flow Example:
+
+1. When a user starts a quiz:
+   ```
+   Quiz Service → QuizStarted → Timer Service starts countdown
+   ```
+
+2. When time is running low:
+   ```
+   Timer Service → TimeWarning → Notification Service sends warning
+   ```
+
+3. When quiz is completed:
+   ```
+   Quiz Service → QuizCompleted → Results Service processes answers
+   Results Service → ResultsCalculated → Notification Service sends results
+   ```
+
+#### Benefits of this Architecture:
+
+1. **Scalability**
+   - Each service can be scaled independently
+   - High-traffic services (like Quiz Service) can be scaled up during peak times
+
+2. **Resilience**
+   - Service failures are isolated
+   - Event queue ensures no data loss during service downtime
+
+3. **Flexibility**
+   - New features can be added by creating new services
+   - Existing services can be modified without affecting others
+
+4. **Real-time Processing**
+   - Events enable real-time updates across services
+   - Users get immediate feedback on their actions
+
+#### Technology Stack for EDA:
+
+- **Message Broker**: Apache Kafka or RabbitMQ
+- **Service Communication**: gRPC or REST
+- **Event Store**: EventStoreDB
+- **API Gateway**: Kong or AWS API Gateway
+- **Service Discovery**: Consul or Eureka
+- **Container Orchestration**: Kubernetes
+
+This architecture allows the quiz application to handle high loads, provide real-time feedback, and maintain system reliability while enabling future scalability and feature additions.
+
 # quiz_app_next.js_node
